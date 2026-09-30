@@ -1,0 +1,18 @@
+# Build output
+build/
+dist/
+
+# Legacy Automator droplet (superseded by the py2app build)
+Image Optimizer.app/
+
+# Python
+__pycache__/
+*.pyc
+
+# Local settings (the app stores these in ~/Library/Application Support)
+image_optimizer_settings.json
+.image_optimizer_settings.json
+
+# Editor / OS
+.vscode/
+.DS_Store
