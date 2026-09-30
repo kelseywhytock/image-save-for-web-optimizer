@@ -10,7 +10,7 @@ OPTIONS = {
         "CFBundleName": "Image Optimizer",
         "CFBundleDisplayName": "Image Optimizer",
         "CFBundleIdentifier": "com.kelseywhytock.image-optimizer",
-        "CFBundleVersion": "1.1.1",
+        "CFBundleVersion": "1.1.3",
         "CFBundleShortVersionString": "1.1",
         "NSHighResolutionCapable": True,
         # Drop target — accept image files

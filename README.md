@@ -137,7 +137,7 @@ python3 -m unittest discover tests
 
 - macOS
 - Python 3 with Tk support (developed and tested with the python.org 3.13 build)
-- Dependencies in `requirements.txt`: Pillow, PyObjC (drag-and-drop handling), and py2app (only needed to build the app)
+- Dependencies in `requirements.txt`: Pillow and py2app (only needed to build the app)
 - Very large images: Pillow refuses to open images above its decompression-bomb limit (roughly 179 megapixels). Those files are listed as errors in the results window.
 
 ---

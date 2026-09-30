@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Image Optimizer for Web  v1.1.1
+Image Optimizer for Web  v1.1.3
 - Drop images onto the droplet app to optimize them
 - Double-click the app to open settings
 """
@@ -683,54 +683,30 @@ def _filter_py2app_args(args):
     return result
 
 
-def _run_with_apple_events():
+def _wait_for_dropped_files(max_wait_ms: int = 2000) -> list:
     """
-    Handle file drops via Apple Events (open document events).
-    macOS sends dropped files as odoc Apple Events rather than argv
-    when argv_emulation is off. We install a handler, wait briefly,
-    then fall back to settings if nothing arrives. If PyObjC isn't
-    installed, fall back to plain argv handling.
+    Collect files dropped onto the app icon.
+    macOS delivers dropped files as an "open document" Apple Event rather than
+    argv (argv_emulation is off). Tk turns that event into a call to
+    ::tk::mac::OpenDocument, so we register that command on a hidden root and
+    run the event loop until files arrive or max_wait_ms passes. On a cold
+    launch the event arrives ~0.6 s after Tk starts, so the wait must be well
+    above that; if nothing arrives, the app was double-clicked.
+    Tk must own the NSApplication, so don't create one from PyObjC first.
     """
-    try:
-        from AppKit import NSApplication, NSObject
-        from Foundation import NSTimer
-        import objc
+    dropped = []
+    root = tk.Tk()
+    root.withdraw()
 
-        dropped_paths = []
-        timer_fired = []
+    def on_open(*paths):
+        dropped.extend(paths)
+        root.after(100, root.quit)  # short grace in case more events follow
 
-        class AppDelegate(NSObject):
-            def applicationDidFinishLaunching_(self, notif):
-                # Give Apple Events 0.3s to arrive before falling back to settings
-                NSTimer.scheduledTimerWithTimeInterval_target_selector_userInfo_repeats_(
-                    0.3, self, b"timerFired:", None, False
-                )
-
-            def application_openFiles_(self, app, filenames):
-                dropped_paths.extend(filenames)
-                app.replyToOpenOrPrint_(0)  # NSApplicationDelegateReplySuccess
-
-            def timerFired_(self, timer):
-                timer_fired.append(True)
-                NSApplication.sharedApplication().stop_(None)
-
-        app = NSApplication.sharedApplication()
-        delegate = AppDelegate.alloc().init()
-        app.setDelegate_(delegate)
-        app.run()
-
-        if dropped_paths:
-            run_optimizer(dropped_paths)
-        else:
-            show_settings_window()
-
-    except ImportError:
-        # AppKit not available (running outside .app bundle)
-        args = _filter_py2app_args(sys.argv[1:])
-        if args:
-            run_optimizer(args)
-        else:
-            show_settings_window()
+    root.createcommand("::tk::mac::OpenDocument", on_open)
+    root.after(max_wait_ms, root.quit)
+    root.mainloop()
+    root.destroy()
+    return dropped
 
 
 if __name__ == "__main__":
@@ -739,5 +715,9 @@ if __name__ == "__main__":
         # Called with file args directly (e.g. from terminal)
         run_optimizer(args)
     else:
-        # Launched by macOS (double-click or drop) — use Apple Events
-        _run_with_apple_events()
+        # Launched by macOS (double-click or drop): a drop arrives as an Apple Event
+        dropped = _wait_for_dropped_files()
+        if dropped:
+            run_optimizer(dropped)
+        else:
+            show_settings_window()

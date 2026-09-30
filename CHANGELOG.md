@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.1.3] - 2026-09-30
+Files: `image_optimizer.py v1.1.3`, `setup.py v1.1.3`.
+
+### Fixed
+- **Dropping an image sometimes opened Settings instead of the confirm window.** On a cold launch the open-document event arrives about 0.6 s after Tk starts (measured 0.62-0.65 s over three launches), but `_wait_for_dropped_files()` only waited 300 ms. It now waits up to 2 s and stops 100 ms after files arrive, so drops are not slowed down. Double-clicking the app now shows Settings after up to 2 s instead of 0.3 s.
+
+## [1.1.2] - 2026-09-30
+Files: `image_optimizer.py v1.1.2`, `setup.py v1.1.2`, `requirements.txt`.
+
+### Fixed
+- **The built app crashed on launch** (`-[NSApplication macOSVersion]: unrecognized selector`, SIGABRT) on macOS 26 with the bundled Tk 8.6.16, both when dropping files and when double-clicking. The drop handler created a plain `NSApplication` through PyObjC before Tk started, so Tk's own application class was never installed and Tk crashed while resolving its first color. Dropped files are now received through Tk's `::tk::mac::OpenDocument` hook on a hidden root window, so Tk owns the application object. Verified by building in a clean virtualenv and dropping an image on the bundle: the confirm window opens and Tk receives the path.
+
+### Removed
+- `pyobjc-framework-Cocoa` from `requirements.txt`, and `_run_with_apple_events()` from `image_optimizer.py`. Nothing imports PyObjC any more. Replaced by `_wait_for_dropped_files()`.
+
 ## [1.1.1] - 2026-09-30
 Pre-review cleanup. Files: `image_optimizer.py v1.1.1`, `setup.py v1.1.1`.
 
