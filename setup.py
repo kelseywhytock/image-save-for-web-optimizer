@@ -5,7 +5,7 @@ DATA_FILES = []
 
 OPTIONS = {
     "argv_emulation": False,
-    "iconfile": None,
+    "iconfile": "AppIcon.icns",
     "plist": {
         "CFBundleName": "Image Optimizer",
         "CFBundleDisplayName": "Image Optimizer",

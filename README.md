@@ -92,6 +92,8 @@ The folder where all optimized images are saved. Click **Choose…** to pick a d
 | `requirements.txt` | Python dependencies |
 | `~/Library/Application Support/Image Optimizer/settings.json` | Your saved settings (auto-created on first save, outside the repo and the app bundle) |
 | `setup.py` | py2app build configuration |
+| `AppIcon.icns` | App icon used by the build (generated from `app_icon_1024.png`) |
+| `app_icon_1024.png` | Source artwork for the icon |
 
 > `dist/` is not committed. Build it yourself as described below.
 

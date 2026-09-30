@@ -11,6 +11,8 @@ Pre-review cleanup. Files: `image_optimizer.py v1.1.1`, `setup.py v1.1.1`.
 - README: success notice closes after 1 second (not ~2), build instructions use the real directory name, and the permissions section matches `setup.py` (Documents only declared).
 - `_run_with_apple_events()` docstring now states the PyObjC fallback accurately.
 
+- **The built app had no custom icon.** `setup.py` had `iconfile: None`, so py2app used the generic Python icon. It now uses `AppIcon.icns`, generated from `app_icon_1024.png` with `sips` + `iconutil`. Both files are committed. Verified by building in a clean virtualenv: the bundle contains the icon and PyObjC's `AppKit`.
+
 ### Changed
 - `requirements.txt` now has version bounds (`Pillow>=10,<13`, `pyobjc-framework-Cocoa>=10`, `py2app>=0.28`).
 - README documents Pillow's decompression-bomb limit for very large images.
