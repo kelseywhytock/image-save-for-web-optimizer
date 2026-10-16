@@ -115,6 +115,19 @@ codesign --deep --force --sign "-" "dist/Image Optimizer.app"
 
 The rebuilt app will appear in `dist/Image Optimizer.app`.
 
+> **Don't launch `dist/Image Optimizer.app` before zipping it.** Running it writes a `Resources/__pycache__/` folder into the bundle, which invalidates the code signature (`a sealed resource is missing or invalid`). If that happens, delete that folder and re-run the `codesign` command above. Test from a copy instead.
+
+---
+
+## Sharing with a Colleague
+
+1. Zip with `ditto -c -k --keepParent "dist/Image Optimizer.app" dist/ImageOptimizer.zip` (a Finder zip can break the signature).
+2. Colleague unzips, moves the app to `/Applications`, then runs:
+   `xattr -dr com.apple.quarantine "/Applications/Image Optimizer.app"`
+3. Right-click the app > **Make Alias** (or drag it to the Dock). The alias shows the app's built-in icon.
+
+If dropped images just sit on top of the icon instead of being accepted, the app is quarantined or its signature is broken. Check with `codesign --verify --deep --strict "/Applications/Image Optimizer.app"`. Only jpg, jpeg, png, gif, bmp, tiff, tif and webp are accepted, so HEIC and AVIF files are not droppable.
+
 ---
 
 ## macOS Permissions
