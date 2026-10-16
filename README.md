@@ -6,11 +6,21 @@ A Mac droplet app for batch-optimizing images for web use. Drop images onto the 
 
 ## Getting the App
 
-**Most people:** use the prebuilt app in this repo, no Python needed.
+**Easiest (no warning):** paste this into Terminal. It downloads the app with `curl`, checks its SHA-256, and installs it to `/Applications` (or `~/Applications`). Files fetched this way are never quarantined, so macOS shows no "could not verify" message.
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/kelseywhytock/image-save-for-web-optimizer/main/install.sh | bash
+```
+
+You can read the script first: [`install.sh`](install.sh). It only downloads from this repo, refuses to install if the checksum doesn't match, needs no sudo, and only writes `Image Optimizer.app`.
+
+**Manual download:** use the prebuilt app in this repo, no Python needed.
 
 1. Download `releases/ImageOptimizer-1.1.3.zip` and unzip it.
 2. Move **Image Optimizer.app** to `/Applications`.
-3. In Terminal, run: `xattr -dr com.apple.quarantine "/Applications/Image Optimizer.app"` (the app is ad-hoc signed, not notarized, so macOS blocks it until you do this or right-click > Open once).
+3. Allow the app past Gatekeeper. It is ad-hoc signed, not notarized by Apple, so a downloaded copy shows *"Apple could not verify Image Optimizer is free of malware"*. Either:
+   - In Terminal, run `xattr -dr com.apple.quarantine "/Applications/Image Optimizer.app"` (works on every macOS version), or
+   - Try to open the app once, then go to **System Settings > Privacy & Security**, scroll to *Security*, and click **Open Anyway**. (Right-click > Open no longer bypasses this on macOS 15 and later.)
 4. Right-click the app > **Make Alias**, or drag it to the Dock.
 
 **Developers:** build it from source, see [Building the App](#building-the-app).
@@ -99,6 +109,7 @@ The folder where all optimized images are saved. Click **Choose…** to pick a d
 
 | File | Purpose |
 |------|---------|
+| `install.sh` | One-line installer: curl download, checksum check, no quarantine flag |
 | `releases/ImageOptimizer-1.1.3.zip` | Prebuilt, signed app for download (zip made with `ditto`) |
 | `dist/Image Optimizer.app` | The built app — drag images onto this, or move to Applications / Dock |
 | `image_optimizer.py` | The Python source script |
@@ -138,6 +149,7 @@ The rebuilt app will appear in `dist/Image Optimizer.app`.
 1. Download `releases/ImageOptimizer-1.1.3.zip` (or zip your own build with `ditto -c -k --keepParent "dist/Image Optimizer.app" ImageOptimizer.zip`) (a Finder zip can break the signature).
 2. Colleague unzips, moves the app to `/Applications`, then runs:
    `xattr -dr com.apple.quarantine "/Applications/Image Optimizer.app"`
+   (or **System Settings > Privacy & Security > Open Anyway** after a first blocked launch)
 3. Right-click the app > **Make Alias** (or drag it to the Dock). The alias shows the app's built-in icon.
 
 If dropped images just sit on top of the icon instead of being accepted, the app is quarantined or its signature is broken. Check with `codesign --verify --deep --strict "/Applications/Image Optimizer.app"`. Only jpg, jpeg, png, gif, bmp, tiff, tif and webp are accepted, so HEIC and AVIF files are not droppable.
