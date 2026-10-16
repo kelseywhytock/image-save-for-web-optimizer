@@ -7,6 +7,9 @@ No code changes. Docs only: `README.md`.
 - **The built `dist/Image Optimizer.app` had an invalid code signature** (`a sealed resource is missing or invalid`): a `Resources/__pycache__/` folder had been written into the bundle after signing, by launching the app. An unsigned-looking or quarantined app is not accepted as a drop target by Finder, so a colleague's dropped files just sat on top of the icon. Removed the folder, re-signed ad hoc, verified with `codesign --verify --deep --strict`, and re-zipped with `ditto` to `dist/ImageOptimizer.zip`. `dist/` is gitignored, so this is a local build fix.
 
 ### Changed
+- README: rewrote **Getting the App** for non-technical users: how to open Terminal, step-by-step one-line install, how to download the zip from GitHub's web UI, system requirements (macOS 11+, Intel or Apple Silicon, no Python needed), update and uninstall steps. Rationale: the old text assumed users knew Terminal and GitHub, and the Requirements section listed only build dependencies, which implied users needed Python.
+- README: split **Requirements** into "to use" and "to build". Verified with `lipo`/`vtool`: the bundle is universal (`x86_64 arm64`) and all 86 binaries target macOS 11.0+; only tested on macOS 26.
+- README: replaced "Sharing with a Colleague" (duplicated install steps) with a user-facing **Troubleshooting** section and a maintainers-only **Releasing a New Version** checklist that includes updating `ZIP_URL`/`ZIP_SHA256` in `install.sh`.
 - README: removed the "right-click > Open once" Gatekeeper workaround, which macOS 15+ ignores, and documented **System Settings > Privacy & Security > Open Anyway** plus the `xattr` command. Cause: a downloaded copy of the ad-hoc-signed, un-notarized app showed "Apple could not verify ... is free of malware".
 
 ### Added

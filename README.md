@@ -6,24 +6,39 @@ A Mac droplet app for batch-optimizing images for web use. Drop images onto the 
 
 ## Getting the App
 
-**Easiest (no warning):** paste this into Terminal. It downloads the app with `curl`, checks its SHA-256, and installs it to `/Applications` (or `~/Applications`). Files fetched this way are never quarantined, so macOS shows no "could not verify" message.
+**You need:** a Mac running macOS 11 or later (Intel or Apple Silicon). The app is self-contained, so you do **not** need to install Python or anything else. *(Built to run on macOS 11+; tested on macOS 26 only.)*
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/kelseywhytock/image-save-for-web-optimizer/main/install.sh | bash
-```
+### Option 1: One-line install (recommended)
 
-You can read the script first: [`install.sh`](install.sh). It only downloads from this repo, refuses to install if the checksum doesn't match, needs no sudo, and only writes `Image Optimizer.app`.
+1. Open **Terminal**: press **Cmd + Space**, type `Terminal`, press **Return**.
+2. Paste this line and press **Return**:
 
-**Manual download:** use the prebuilt app in this repo, no Python needed.
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/kelseywhytock/image-save-for-web-optimizer/main/install.sh | bash
+   ```
 
-1. Download `releases/ImageOptimizer-1.1.3.zip` and unzip it.
-2. Move **Image Optimizer.app** to `/Applications`.
-3. Allow the app past Gatekeeper. It is ad-hoc signed, not notarized by Apple, so a downloaded copy shows *"Apple could not verify Image Optimizer is free of malware"*. Either:
+3. Wait for it to print `Installed: /Applications/Image Optimizer.app` (a few seconds). You're done. Skip to [How to Use](#how-to-use).
+
+This downloads the app with `curl`, checks its SHA-256, and installs it to `/Applications` (or `~/Applications` if that isn't writable). Files fetched this way aren't quarantined, so macOS shows no "could not verify" warning. You can read the script first: [`install.sh`](install.sh). It only downloads from this repo, refuses to install if the checksum doesn't match, needs no sudo, and only writes `Image Optimizer.app`.
+
+### Option 2: Manual download
+
+1. Open the [`releases` folder](https://github.com/kelseywhytock/image-save-for-web-optimizer/tree/main/releases) on GitHub, click `ImageOptimizer-1.1.3.zip`, then click the **Download raw file** button (the down-arrow icon at the top right of the file view).
+2. Unzip it (double-click the zip, unless your browser already did) and drag **Image Optimizer.app** into your **Applications** folder.
+3. Allow the app past Gatekeeper. It is ad-hoc signed, not notarized by Apple, so a browser-downloaded copy shows *"Apple could not verify Image Optimizer is free of malware"*. Either:
    - In Terminal, run `xattr -dr com.apple.quarantine "/Applications/Image Optimizer.app"` (works on every macOS version), or
    - Try to open the app once, then go to **System Settings > Privacy & Security**, scroll to *Security*, and click **Open Anyway**. (Right-click > Open no longer bypasses this on macOS 15 and later.)
-4. Right-click the app > **Make Alias**, or drag it to the Dock.
 
-**Developers:** build it from source, see [Building the App](#building-the-app).
+### Option 3: Build from source (developers)
+
+See [Building the App](#building-the-app).
+
+### Quick access
+Right-click the app and choose **Make Alias**, or drag it to your **Dock**, so you can drop images onto it without opening the Applications folder. The alias shows the app's own icon.
+
+### Updating and uninstalling
+- **Update:** run the one-line install again. It replaces the old copy. Your settings are kept.
+- **Uninstall:** drag **Image Optimizer.app** to the Trash. To also remove settings, delete `~/Library/Application Support/Image Optimizer/`.
 
 ---
 
@@ -38,9 +53,6 @@ When complete, a brief success notice auto-closes after 1 second. If any file fa
 
 ### Change settings
 **Double-click** Image Optimizer.app to open the Settings window.
-
-### Quick access
-Drag Image Optimizer.app to your **Dock** so you can drop images onto it without navigating to the folder each time.
 
 ---
 
@@ -144,15 +156,24 @@ The rebuilt app will appear in `dist/Image Optimizer.app`.
 
 ---
 
-## Sharing with a Colleague
+## Troubleshooting
 
-1. Download `releases/ImageOptimizer-1.1.3.zip` (or zip your own build with `ditto -c -k --keepParent "dist/Image Optimizer.app" ImageOptimizer.zip`) (a Finder zip can break the signature).
-2. Colleague unzips, moves the app to `/Applications`, then runs:
-   `xattr -dr com.apple.quarantine "/Applications/Image Optimizer.app"`
-   (or **System Settings > Privacy & Security > Open Anyway** after a first blocked launch)
-3. Right-click the app > **Make Alias** (or drag it to the Dock). The alias shows the app's built-in icon.
+**Dropped images just sit on top of the app icon instead of being accepted.** Either the app is quarantined (see Gatekeeper in [Getting the App](#getting-the-app)) or its signature is broken. Check with:
 
-If dropped images just sit on top of the icon instead of being accepted, the app is quarantined or its signature is broken. Check with `codesign --verify --deep --strict "/Applications/Image Optimizer.app"`. Only jpg, jpeg, png, gif, bmp, tiff, tif and webp are accepted, so HEIC and AVIF files are not droppable.
+```bash
+codesign --verify --deep --strict "/Applications/Image Optimizer.app"
+```
+
+If that prints an error, reinstall with the one-line install. Only jpg, jpeg, png, gif, bmp, tiff, tif and webp can be dropped, so HEIC and AVIF files are ignored.
+
+---
+
+## Releasing a New Version (maintainers)
+
+1. Rebuild and sign as in [Building the App](#building-the-app). Don't launch the build.
+2. Zip it with `ditto` (a Finder zip can break the signature): `ditto -c -k --keepParent "dist/Image Optimizer.app" releases/ImageOptimizer-X.Y.Z.zip`
+3. Update `ZIP_URL` and `ZIP_SHA256` in `install.sh` (`shasum -a 256 releases/ImageOptimizer-X.Y.Z.zip`), and the zip name in this README.
+4. Update `CHANGELOG.md`, commit, and push.
 
 ---
 
@@ -174,10 +195,13 @@ python3 -m unittest discover tests
 
 ## Requirements
 
-- macOS
+**To use the app:** a Mac running macOS 11 or later (Intel or Apple Silicon). Nothing else to install.
+
+**To build or develop:**
 - Python 3 with Tk support (developed and tested with the python.org 3.13 build)
-- Dependencies in `requirements.txt`: Pillow and py2app (only needed to build the app)
-- Very large images: Pillow refuses to open images above its decompression-bomb limit (roughly 179 megapixels). Those files are listed as errors in the results window.
+- Dependencies in `requirements.txt`: Pillow and py2app (py2app is only needed to build the app)
+
+**Limits:** very large images. Pillow refuses to open images above its decompression-bomb limit (roughly 179 megapixels). Those files are listed as errors in the results window.
 
 ---
 
