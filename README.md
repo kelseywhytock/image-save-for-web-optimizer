@@ -4,6 +4,19 @@ A Mac droplet app for batch-optimizing images for web use. Drop images onto the 
 
 ---
 
+## Getting the App
+
+**Most people:** use the prebuilt app in this repo, no Python needed.
+
+1. Download `releases/ImageOptimizer-1.1.3.zip` and unzip it.
+2. Move **Image Optimizer.app** to `/Applications`.
+3. In Terminal, run: `xattr -dr com.apple.quarantine "/Applications/Image Optimizer.app"` (the app is ad-hoc signed, not notarized, so macOS blocks it until you do this or right-click > Open once).
+4. Right-click the app > **Make Alias**, or drag it to the Dock.
+
+**Developers:** build it from source, see [Building the App](#building-the-app).
+
+---
+
 ## How to Use
 
 ### Optimize images
@@ -86,6 +99,7 @@ The folder where all optimized images are saved. Click **Choose…** to pick a d
 
 | File | Purpose |
 |------|---------|
+| `releases/ImageOptimizer-1.1.3.zip` | Prebuilt, signed app for download (zip made with `ditto`) |
 | `dist/Image Optimizer.app` | The built app — drag images onto this, or move to Applications / Dock |
 | `image_optimizer.py` | The Python source script |
 | `tests/test_image_optimizer.py` | Unit tests for the image processing pipeline |
@@ -95,7 +109,7 @@ The folder where all optimized images are saved. Click **Choose…** to pick a d
 | `AppIcon.icns` | App icon used by the build (generated from `app_icon_1024.png`) |
 | `app_icon_1024.png` | Source artwork for the icon |
 
-> `dist/` is not committed. Build it yourself as described below.
+> `dist/` is not committed (it is build output). The prebuilt app lives in `releases/` as a zip; build your own as described below.
 
 > The `dist/Image Optimizer.app` bundle is fully self-contained. You can move it anywhere — to your Dock, Applications folder, or Desktop — independently of the source files.
 
@@ -121,7 +135,7 @@ The rebuilt app will appear in `dist/Image Optimizer.app`.
 
 ## Sharing with a Colleague
 
-1. Zip with `ditto -c -k --keepParent "dist/Image Optimizer.app" dist/ImageOptimizer.zip` (a Finder zip can break the signature).
+1. Download `releases/ImageOptimizer-1.1.3.zip` (or zip your own build with `ditto -c -k --keepParent "dist/Image Optimizer.app" ImageOptimizer.zip`) (a Finder zip can break the signature).
 2. Colleague unzips, moves the app to `/Applications`, then runs:
    `xattr -dr com.apple.quarantine "/Applications/Image Optimizer.app"`
 3. Right-click the app > **Make Alias** (or drag it to the Dock). The alias shows the app's built-in icon.

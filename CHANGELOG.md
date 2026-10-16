@@ -7,6 +7,8 @@ No code changes. Docs only: `README.md`.
 - **The built `dist/Image Optimizer.app` had an invalid code signature** (`a sealed resource is missing or invalid`): a `Resources/__pycache__/` folder had been written into the bundle after signing, by launching the app. An unsigned-looking or quarantined app is not accepted as a drop target by Finder, so a colleague's dropped files just sat on top of the icon. Removed the folder, re-signed ad hoc, verified with `codesign --verify --deep --strict`, and re-zipped with `ditto` to `dist/ImageOptimizer.zip`. `dist/` is gitignored, so this is a local build fix.
 
 ### Added
+- `releases/ImageOptimizer-1.1.3.zip`: the prebuilt, ad-hoc-signed app (32 MB, made with `ditto -c -k --keepParent`), committed so the repo ships a usable app. Each future rebuild adds another ~32 MB to history if committed; consider moving to GitHub Releases if versions accumulate.
+- README: "Getting the App" section for non-developers; file table lists the zip.
 - README: "Sharing with a Colleague" section (zip, quarantine, alias steps, drop-troubleshooting) and a warning not to launch the built bundle before zipping it.
 
 ## [1.1.3] - 2026-09-30
