@@ -211,3 +211,27 @@ class SrgbTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class OpenInFinderTests(unittest.TestCase):
+    def test_default_is_off(self):
+        self.assertIs(io_mod._defaults()["open_finder"], False)
+
+    def test_missing_folder_returns_false_without_calling_open(self):
+        from unittest import mock
+        with mock.patch.object(io_mod.subprocess, "run") as run:
+            self.assertFalse(io_mod.open_in_finder(Path("/nonexistent/folder")))
+            run.assert_not_called()
+
+    def test_existing_folder_calls_open(self):
+        from unittest import mock
+        with tempfile.TemporaryDirectory() as d, \
+                mock.patch.object(io_mod.subprocess, "run") as run:
+            self.assertTrue(io_mod.open_in_finder(Path(d)))
+            self.assertEqual(run.call_args.args[0], ["open", d])
+
+    def test_open_failure_returns_false(self):
+        from unittest import mock
+        with tempfile.TemporaryDirectory() as d, \
+                mock.patch.object(io_mod.subprocess, "run", side_effect=OSError):
+            self.assertFalse(io_mod.open_in_finder(Path(d)))

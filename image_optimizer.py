@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Image Optimizer for Web  v1.1.3
+Image Optimizer for Web  v1.2.0
 - Drop images onto the droplet app to optimize them
 - Double-click the app to open settings
 """
@@ -10,6 +10,7 @@ import io
 import json
 import queue
 import shutil
+import subprocess
 import threading
 import tkinter as tk
 from tkinter import ttk, messagebox
@@ -42,6 +43,7 @@ def _defaults() -> dict:
         "convert_srgb":   True,
         "progressive":    True,
         "output_dir":     _default_output_dir(),
+        "open_finder":    False,
     }
 
 
@@ -476,6 +478,19 @@ def show_done_window(results: list, out_dir: Path):
     root.mainloop()
 
 
+# ── Finder ────────────────────────────────────────────────────────────────────
+
+def open_in_finder(folder: Path) -> bool:
+    """Open (or bring forward) a Finder window on `folder`. Returns True on success."""
+    if not folder.is_dir():
+        return False
+    try:
+        subprocess.run(["open", str(folder)], check=True, timeout=10)
+        return True
+    except (OSError, subprocess.SubprocessError):
+        return False
+
+
 # ── Run optimizer ─────────────────────────────────────────────────────────────
 
 def run_optimizer(paths: list):
@@ -493,6 +508,8 @@ def run_optimizer(paths: list):
         return
 
     results = show_progress_and_run(files, cfg)
+    if cfg["open_finder"] and any(r["ok"] for r in results):
+        open_in_finder(Path(cfg["output_dir"]))
     show_done_window(results, Path(cfg["output_dir"]))
 
 
@@ -574,11 +591,13 @@ def show_settings_window():
     strip_meta_var   = tk.BooleanVar(value=cfg["strip_metadata"])
     convert_srgb_var = tk.BooleanVar(value=cfg["convert_srgb"])
     progressive_var  = tk.BooleanVar(value=cfg["progressive"])
+    open_finder_var  = tk.BooleanVar(value=cfg["open_finder"])
     for text, var, r in [
         ("Convert opaque PNGs to JPG",   convert_png_var,  5),
         ("Strip metadata (EXIF/GPS)",     strip_meta_var,   6),
         ("Convert color profile to sRGB", convert_srgb_var, 7),
         ("Progressive JPEG encoding",     progressive_var,  8),
+        ("Open output folder in Finder when done", open_finder_var, 9),
     ]:
         ttk.Checkbutton(frame, text=text, variable=var).grid(
             row=r, column=0, columnspan=3, sticky="w", pady=3)
@@ -629,6 +648,7 @@ def show_settings_window():
             "convert_srgb":   convert_srgb_var.get(),
             "progressive":    progressive_var.get(),
             "output_dir":     output_dir_var.get(),
+            "open_finder":    open_finder_var.get(),
         }
         try:
             save_settings(new_cfg)

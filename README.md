@@ -107,6 +107,9 @@ Saves JPEGs in progressive format, which loads top-to-bottom in a blurry-to-shar
 ### Output Folder `(default: ~/Desktop/optimized/)`
 The folder where all optimized images are saved. Click **Choose…** to pick a different location. The folder is created automatically if it doesn't exist.
 
+### Open output folder in Finder when done `(default: off)`
+When checked, a Finder window opens on the output folder after optimizing finishes, so you can grab the files right away. If a window for that folder is already open, Finder brings it to the front instead of opening a second one. Nothing opens if every image failed.
+
 ---
 
 ## Output Behavior

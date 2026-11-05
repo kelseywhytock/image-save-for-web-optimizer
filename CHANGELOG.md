@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.0] - 2026-11-05
+### Added
+- **"Open output folder in Finder when done" setting** (`image_optimizer.py` v1.2.0, `setup.py` `CFBundleVersion` 1.2.0). New `open_finder` key in `settings.json` (default `False`; older settings files pick up the default via the existing defaults merge) and a checkbox in the Settings window. When on, `run_optimizer` calls the new `open_in_finder()` (`open <folder>`) after processing if at least one image succeeded, before the Done window. `open` reuses an existing Finder window for that folder. Rationale: users had to navigate to the output folder by hand after every run. Defaults to off so existing behavior doesn't change.
+- `tests/test_image_optimizer.py`: `OpenInFinderTests` (default off, missing folder, `open` invoked, `open` failure). All 24 tests pass. The GUI checkbox and the real Finder launch were not exercised in a built app.
+- README: documented the new setting.
+
+**Not yet done:** the prebuilt `releases/ImageOptimizer-1.1.3.zip` and `install.sh` still ship 1.1.3. Rebuild and re-pin per "Releasing a New Version" to ship this.
+
 ## [Unreleased] - 2026-10-16
 No code changes. Docs only: `README.md`.
 
