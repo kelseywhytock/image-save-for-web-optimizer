@@ -6,7 +6,10 @@
 - `tests/test_image_optimizer.py`: `OpenInFinderTests` (default off, missing folder, `open` invoked, `open` failure). All 24 tests pass. The GUI checkbox and the real Finder launch were not exercised in a built app.
 - README: documented the new setting.
 
-**Not yet done:** the prebuilt `releases/ImageOptimizer-1.1.3.zip` and `install.sh` still ship 1.1.3. Rebuild and re-pin per "Releasing a New Version" to ship this.
+### Release
+- `releases/ImageOptimizer-1.2.0.zip`: rebuilt with `py2app`, ad-hoc signed, verified with `codesign --verify --deep --strict`, zipped with `ditto` (41 MB, up from 32 MB for 1.1.3; the build environment's dependency set differs, size not investigated). SHA-256 `9e62fc41...2798`.
+- `install.sh` v1.2.0: `ZIP_URL` and `ZIP_SHA256` re-pinned to the new zip.
+- Removed `releases/ImageOptimizer-1.1.3.zip` from the tree so the repo doesn't carry two 30+ MB zips; it remains in git history. README references updated to 1.2.0.
 
 ## [Unreleased] - 2026-10-16
 No code changes. Docs only: `README.md`.

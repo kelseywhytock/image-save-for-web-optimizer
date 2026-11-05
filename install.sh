@@ -1,5 +1,5 @@
 #!/bin/bash
-# Image Optimizer installer (v1.1.3)
+# Image Optimizer installer (v1.2.0)
 #
 # Downloads the prebuilt app from this repo with curl, verifies its SHA-256,
 # and installs it. Files fetched with curl never get the browser quarantine
@@ -17,8 +17,8 @@
 
 set -euo pipefail
 
-ZIP_URL="https://raw.githubusercontent.com/kelseywhytock/image-save-for-web-optimizer/main/releases/ImageOptimizer-1.1.3.zip"
-ZIP_SHA256="8f01bc00f5ad281680359ad641689aa468c2949aac9d4783e31fc47bd85f2e67"
+ZIP_URL="https://raw.githubusercontent.com/kelseywhytock/image-save-for-web-optimizer/main/releases/ImageOptimizer-1.2.0.zip"
+ZIP_SHA256="9e62fc412d649e8c60eea0be2974f06ac2fa62362faa9787acfbfb2529cb2798"
 APP_NAME="Image Optimizer.app"
 
 if [ "$(uname -s)" != "Darwin" ]; then

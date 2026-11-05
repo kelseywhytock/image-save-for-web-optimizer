@@ -23,7 +23,7 @@ This downloads the app with `curl`, checks its SHA-256, and installs it to `/App
 
 ### Option 2: Manual download
 
-1. Open the [`releases` folder](https://github.com/kelseywhytock/image-save-for-web-optimizer/tree/main/releases) on GitHub, click `ImageOptimizer-1.1.3.zip`, then click the **Download raw file** button (the down-arrow icon at the top right of the file view).
+1. Open the [`releases` folder](https://github.com/kelseywhytock/image-save-for-web-optimizer/tree/main/releases) on GitHub, click `ImageOptimizer-1.2.0.zip`, then click the **Download raw file** button (the down-arrow icon at the top right of the file view).
 2. Unzip it (double-click the zip, unless your browser already did) and drag **Image Optimizer.app** into your **Applications** folder.
 3. Allow the app past Gatekeeper. It is ad-hoc signed, not notarized by Apple, so a browser-downloaded copy shows *"Apple could not verify Image Optimizer is free of malware"*. Either:
    - In Terminal, run `xattr -dr com.apple.quarantine "/Applications/Image Optimizer.app"` (works on every macOS version), or
@@ -125,7 +125,7 @@ When checked, a Finder window opens on the output folder after optimizing finish
 | File | Purpose |
 |------|---------|
 | `install.sh` | One-line installer: curl download, checksum check, no quarantine flag |
-| `releases/ImageOptimizer-1.1.3.zip` | Prebuilt, signed app for download (zip made with `ditto`) |
+| `releases/ImageOptimizer-1.2.0.zip` | Prebuilt, signed app for download (zip made with `ditto`) |
 | `dist/Image Optimizer.app` | The built app — drag images onto this, or move to Applications / Dock |
 | `image_optimizer.py` | The Python source script |
 | `tests/test_image_optimizer.py` | Unit tests for the image processing pipeline |
